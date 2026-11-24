@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amigo Secreto Navideño</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --cream: #fdf0e4;
+    --cream2: #f8dfcd;
+    --ink: #4a2e2b;
+    --muted: #7a5a52;
+    --red: #c4282f;
+    --red-dark: #8f1a20;
+    --pine: #2c6b4a;
+    --pine-deep: #1d4a35;
+    --gold: #e8b23d;
+    --paper: #fffaf2;
+    --display: "Mountains of Christmas", Georgia, serif;
+    --body: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { background: var(--cream); }
+  body {
+    margin: 0; min-height: 100vh;
+    color: var(--ink);
+    font-family: var(--body); font-size: 18px; line-height: 1.45;
+    background: radial-gradient(90% 60% at 50% 0%, #fff7ee 0%, var(--cream) 55%, var(--cream2) 100%);
+    overflow-x: hidden;
+  }
+  .wallpaper { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+  .snow { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 5; }
+  .snow i {
+    position: absolute; top: -10px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 0 1.5px rgba(139,178,205,.55);
+    opacity: .9; animation: fall linear infinite;
+  }
+  @keyframes fall { to { transform: translate3d(var(--drift, 20px), 105vh, 0); } }
+
+  .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* guirnalda */
+  .garland { display: block; width: 100%; height: 96px; flex: none; }
+
+  /* portada con personajes asomándose */
+  .hero-wrap { position: relative; overflow: hidden; flex: none; min-height: 330px; }
+  .hero { max-width: 520px; margin: 0 auto; padding: 6px 70px 20px; text-align: center; }
+  .hero h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(34px, 10.8vw, 52px); line-height: 1;
+    margin: 10px 0 12px; color: var(--red);
+    text-shadow: 0 2px 0 #fff, 0 4px 0 rgba(196,40,47,.15);
+  }
+  .hero .sub { margin: 0 auto; color: var(--muted); font-size: 17px; max-width: 30ch; }
+
+  .peek { position: absolute; width: 112px; height: 130px; z-index: 1; pointer-events: none; will-change: transform; }
+  .peek svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .peek.l { left: -44px; animation: peekL 3.4s ease-in-out infinite; }
+  .peek.r { right: -44px; animation: peekR 3.4s ease-in-out infinite; }
+  .peek.r svg { transform: scaleX(-1); }
+  .peek.l1 { top: 8px; }
+  .peek.l2 { top: 190px; animation-delay: -1.5s; }
+  .peek.r1 { top: 34px; animation-delay: -.7s; }
+  .peek.r2 { top: 178px; animation-delay: -2.2s; }
+  @keyframes peekL { 0%,100% { transform: translateX(0) rotate(0); } 50% { transform: translateX(8px) rotate(2deg); } }
+  @keyframes peekR { 0%,100% { transform: translateX(0) rotate(0); } 50% { transform: translateX(-8px) rotate(-2deg); } }
+
+  main {
+    width: 100%; max-width: 520px; margin: 0 auto; flex: none;
+    padding: 0 24px 30px;
+    display: flex; flex-direction: column; gap: 22px;
+  }
+  label { font-weight: 600; display: block; margin-bottom: 8px; color: var(--pine-deep); text-align: center; }
+  .code-row { display: flex; flex-direction: column; gap: 12px; }
+  input#codigo {
+    flex: 1; min-width: 0;
+    font-family: var(--body); font-weight: 600; font-size: 24px;
+    letter-spacing: .01em; text-align: center;
+    color: var(--pine-deep); background: #fff;
+    border: 3px solid var(--pine); border-radius: 18px; padding: 14px 12px;
+    box-shadow: 0 4px 0 rgba(44,107,74,.25), inset 0 2px 6px rgba(0,0,0,.05);
+  }
+  input#codigo::placeholder { color: #b9a9a0; opacity: .8; font-size: 22px; letter-spacing: 0; }
+  input#codigo:focus-visible, button#ir:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  button#ir {
+    font: inherit; font-weight: 600; font-size: 18px;
+    color: #fff; background: linear-gradient(#d83a41, var(--red));
+    border: 0; border-radius: 18px; padding: 14px 20px; cursor: pointer;
+    box-shadow: 0 4px 0 var(--red-dark);
+  }
+  button#ir:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--red-dark); }
+  button#ir:disabled { opacity: .6; cursor: default; }
+  .err { min-height: 1.4em; margin: 10px 0 0; color: #b3202a; font-weight: 500; text-align: center; }
+  @keyframes shake { 20%,60% { transform: translateX(-6px); } 40%,80% { transform: translateX(6px); } }
+  .shake { animation: shake .35s; }
+
+  #result { min-height: 1px; }
+  .opening { text-align: center; padding: 6px 0; }
+  .opening svg { display: inline-block; width: 110px; height: 128px; animation: wiggle .5s ease-in-out infinite; }
+  .opening p { margin: 4px 0 0; font-weight: 500; color: var(--pine); }
+  @keyframes wiggle { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg) scale(1.05); } }
+
+  .reveal-wrap { position: relative; padding-top: 92px; animation: pop .55s cubic-bezier(.2, 1.4, .4, 1) both; }
+  .reveal-wrap .ribbon { position: absolute; top: 0; left: 50%; margin-left: -56px; width: 112px; height: 130px; z-index: 1; }
+  .reveal-wrap .ribbon svg { display: block; width: 100%; height: 100%; }
+  .reveal {
+    position: relative; z-index: 2;
+    background: var(--paper); color: var(--pine-deep);
+    border-radius: 22px; padding: 36px 22px 28px; text-align: center;
+    box-shadow: 0 12px 26px rgba(120,60,40,.22), 0 0 0 2px #f3d9c4;
+  }
+  .reveal::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 14px; border-radius: 22px 22px 0 0;
+    background: repeating-linear-gradient(-45deg, var(--red) 0 12px, #fff 12px 24px);
+  }
+  .reveal .bubble {
+    display: inline-block; margin: 0 0 12px; padding: 5px 14px; border-radius: 999px;
+    background: var(--gold); color: #4a2e11; font-weight: 600; font-size: 16px;
+  }
+  .reveal .who { margin: 0 0 4px; font-weight: 600; font-size: 19px; }
+  .reveal .lead { margin: 0; font-weight: 500; color: #6d5a52; }
+  .reveal .amigo {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(44px, 15vw, 72px); line-height: 1.05;
+    color: var(--red); margin: 8px 0 12px; word-break: break-word;
+  }
+  .reveal .hint { margin: 0 auto; max-width: 30ch; font-weight: 500; }
+  .locked { margin: 14px 0 0; font-size: 15px; text-align: center; color: var(--muted); }
+  @keyframes pop {
+    from { transform: scale(.88) rotate(-2deg); opacity: 0; }
+    to   { transform: none; opacity: 1; }
+  }
+
+  /* pueblito */
+  .village { position: relative; flex: none; margin-top: auto; height: 200px; overflow: hidden; pointer-events: none; }
+  .village .houses { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 170px; }
+  .village .tree { position: absolute; bottom: -4px; width: 120px; height: 190px; }
+  .village .tree.l { left: -34px; }
+  .village .tree.r { right: -34px; transform: scaleX(-1); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .snow { display: none; }
+    .peek, .opening svg, .reveal-wrap, .shake { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- dibujos reutilizables -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="wc" x="-4%" y="-4%" width="108%" height="108%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e65a5f"/><stop offset="1" stop-color="#b82329"/></linearGradient>
+    <linearGradient id="gSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fee3d2"/><stop offset="1" stop-color="#f5bfa3"/></linearGradient>
+    <radialGradient id="gSnow" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dce9f3"/></radialGradient>
+    <radialGradient id="gBrown" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#d09a62"/><stop offset="1" stop-color="#8f5d33"/></radialGradient>
+    <linearGradient id="gPine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#69a95f"/><stop offset="1" stop-color="#2d6c42"/></linearGradient>
+    <linearGradient id="gPurple" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a384e0"/><stop offset="1" stop-color="#6a48b0"/></linearGradient>
+  </defs>
+
+  <!-- Santa -->
+  <symbol id="santa" viewBox="0 0 120 140">
+    <g filter="url(#wc)">
+      <path d="M8 140 C8 112 28 102 60 102 C92 102 112 112 112 140 Z" fill="url(#gRed)"/>
+      <path d="M90 110 C104 98 110 88 108 76" stroke="#d63a40" stroke-width="14" stroke-linecap="round" fill="none"/>
+      <circle cx="108" cy="68" r="10" fill="#fff"/>
+      <ellipse cx="60" cy="62" rx="27" ry="25" fill="url(#gSkin)"/>
+      <path d="M31 68 C26 102 42 120 60 120 C78 120 94 102 89 68 C80 80 70 78 60 82 C50 78 40 80 31 68Z" fill="#fff" stroke="#eadad2" stroke-width="2"/>
+      <circle cx="51" cy="75" r="10" fill="#fff"/><circle cx="69" cy="75" r="10" fill="#fff"/>
+      <circle cx="60" cy="66" r="6.5" fill="#f2a29c"/>
+      <path d="M43 58 q5 -6 10 0 M67 58 q5 -6 10 0" stroke="#5a3a32" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <circle cx="39" cy="68" r="5.5" fill="#f4a6a0" opacity=".65"/><circle cx="81" cy="68" r="5.5" fill="#f4a6a0" opacity=".65"/>
+      <path d="M30 40 C28 14 46 0 68 2 C88 4 96 22 92 40 Z" fill="url(#gRed)"/>
+      <rect x="24" y="32" width="72" height="16" rx="8" fill="#fff"/>
+      <circle cx="90" cy="8" r="9" fill="#fff"/>
+    </g>
+  </symbol>
+
+  <!-- Muñeco de nieve -->
+  <symbol id="snowman" viewBox="0 0 120 140">
+    <g filter="url(#wc)">
+      <circle cx="60" cy="112" r="34" fill="url(#gSnow)" stroke="#dbe8f1" stroke-width="2"/>
+      <path d="M28 104 L8 90 M14 94 L10 84 M92 104 L112 90 M106 94 L110 84" stroke="#7a4b2a" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <circle cx="60" cy="62" r="28" fill="url(#gSnow)" stroke="#dbe8f1" stroke-width="2"/>
+      <path d="M34 82 C48 94 72 94 86 82 L89 94 C72 106 48 106 31 94 Z" fill="#6fa8d4"/>
+      <path d="M44 88 l4 14 M56 92 l3 14 M68 92 l-1 14" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+      <rect x="76" y="94" width="13" height="26" rx="5" fill="#6fa8d4" transform="rotate(-8 82 94)"/>
+      <ellipse cx="60" cy="38" rx="32" ry="7" fill="#2f2a33"/>
+      <rect x="40" y="8" width="40" height="32" rx="5" fill="#3a3440"/>
+      <rect x="40" y="28" width="40" height="8" fill="#c4282f"/>
+      <ellipse cx="86" cy="33" rx="9" ry="4.5" fill="#4f9a55" transform="rotate(-25 86 33)"/>
+      <ellipse cx="74" cy="32" rx="9" ry="4.5" fill="#3f8a4a" transform="rotate(20 74 32)"/>
+      <circle cx="80" cy="34" r="3.2" fill="#d6303a"/><circle cx="85" cy="36" r="3" fill="#d6303a"/>
+      <circle cx="50" cy="58" r="3" fill="#3a2e2e"/><circle cx="70" cy="58" r="3" fill="#3a2e2e"/>
+      <path d="M60 64 L84 69 L60 73 Z" fill="#f08a2c"/>
+      <circle cx="41" cy="68" r="5" fill="#f4a6a0" opacity=".65"/><circle cx="79" cy="70" r="5" fill="#f4a6a0" opacity=".65"/>
+      <circle cx="60" cy="108" r="4" fill="#d6303a"/><circle cx="60" cy="124" r="4" fill="#d6303a"/>
+    </g>
+  </symbol>
+
+  <!-- Reno -->
+  <symbol id="reindeer" viewBox="0 0 120 140">
+    <g filter="url(#wc)">
+      <path d="M40 36 C34 24 30 14 28 4 M34 22 C28 22 22 18 20 12 M80 36 C86 24 90 14 92 4 M86 22 C92 22 98 18 100 12" stroke="#8a5a35" stroke-width="5" stroke-linecap="round" fill="none"/>
+      <path d="M18 140 C18 120 36 112 60 112 C84 112 102 120 102 140Z" fill="#8a5a35"/>
+      <ellipse cx="30" cy="54" rx="9" ry="12" fill="url(#gBrown)" transform="rotate(-30 30 54)"/>
+      <ellipse cx="90" cy="54" rx="9" ry="12" fill="url(#gBrown)" transform="rotate(30 90 54)"/>
+      <ellipse cx="31" cy="55" rx="4.5" ry="7" fill="#f2b5a8" transform="rotate(-30 31 55)"/>
+      <ellipse cx="89" cy="55" rx="4.5" ry="7" fill="#f2b5a8" transform="rotate(30 89 55)"/>
+      <ellipse cx="60" cy="68" rx="34" ry="30" fill="url(#gBrown)"/>
+      <ellipse cx="60" cy="82" rx="18" ry="13" fill="#f3dcc0"/>
+      <ellipse cx="60" cy="75" rx="6" ry="4.5" fill="#4a2e2b"/>
+      <path d="M54 85 q6 5 12 0" stroke="#4a2e2b" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M40 62 q5 -6 10 0 M70 62 q5 -6 10 0" stroke="#4a2e2b" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+      <circle cx="36" cy="75" r="5.5" fill="#f4a6a0" opacity=".6"/><circle cx="84" cy="75" r="5.5" fill="#f4a6a0" opacity=".6"/>
+      <path d="M30 96 C44 110 76 110 90 96 L94 110 C76 126 44 126 26 110Z" fill="#c4282f"/>
+      <path d="M40 102 l3 14 M52 106 l2 14 M64 106 l-1 14 M76 102 l-3 14" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+    </g>
+  </symbol>
+
+  <!-- Regalo -->
+  <symbol id="gift" viewBox="0 0 120 140">
+    <g filter="url(#wc)">
+      <rect x="22" y="70" width="76" height="62" rx="6" fill="url(#gRed)"/>
+      <rect x="16" y="54" width="88" height="22" rx="6" fill="#d9424a"/>
+      <rect x="53" y="54" width="14" height="78" fill="#fff3df"/>
+      <path d="M60 54 C42 30 24 40 40 52 C48 56 56 56 60 54Z" fill="#fff3df"/>
+      <path d="M60 54 C78 30 96 40 80 52 C72 56 64 56 60 54Z" fill="#fff3df"/>
+      <circle cx="60" cy="54" r="7" fill="#f2bf3a"/>
+    </g>
+  </symbol>
+
+  <!-- Pino nevado -->
+  <symbol id="pine" viewBox="0 0 120 190">
+    <g filter="url(#wc)">
+      <rect x="52" y="160" width="16" height="30" fill="#7a4b2a"/>
+      <path d="M60 104 L116 170 H4Z" fill="url(#gPine)" stroke="#3f8a4a" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M60 70 L110 140 H10Z" fill="url(#gPine)" stroke="#3f8a4a" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M60 36 L104 100 H16Z" fill="url(#gPine)" stroke="#3f8a4a" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M60 6 L96 58 H24Z" fill="url(#gPine)" stroke="#3f8a4a" stroke-width="4" stroke-linejoin="round"/>
+      <g fill="#fff">
+        <ellipse cx="60" cy="14" rx="11" ry="6"/><ellipse cx="38" cy="52" rx="11" ry="5"/><ellipse cx="82" cy="52" rx="11" ry="5"/>
+        <ellipse cx="30" cy="94" rx="12" ry="5.5"/><ellipse cx="90" cy="94" rx="12" ry="5.5"/><ellipse cx="60" cy="68" rx="9" ry="4"/>
+        <ellipse cx="24" cy="134" rx="12" ry="5.5"/><ellipse cx="96" cy="134" rx="12" ry="5.5"/><ellipse cx="60" cy="102" rx="10" ry="4.5"/>
+        <ellipse cx="20" cy="164" rx="13" ry="5.5"/><ellipse cx="100" cy="164" rx="13" ry="5.5"/><ellipse cx="60" cy="136" rx="10" ry="4.5"/>
+      </g>
+    </g>
+  </symbol>
+</svg>
+
+<!-- papel tapiz con dibujitos suaves -->
+<svg class="wallpaper" aria-hidden="true">
+  <defs>
+    <pattern id="pat" width="240" height="240" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#c98f7b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".12">
+        <path d="M50 22 L70 56 H60 L80 88 H20 L40 56 H30Z"/><path d="M50 88 V104"/>
+        <rect x="158" y="44" width="50" height="40" rx="5"/><path d="M183 44 V84 M158 60 H208"/><path d="M183 44 C170 26 158 40 183 44 C208 40 196 26 183 44"/>
+        <circle cx="52" cy="170" r="18"/><path d="M44 170 a8 8 0 1 1 8 8"/><path d="M52 188 V226"/>
+        <path d="M172 228 V184 a14 14 0 0 1 28 0"/><path d="M172 214 l10 -6 M172 200 l10 -6" stroke-width="2.5"/>
+        <path d="M108 120 H144 V144 A18 18 0 0 1 108 144 Z"/><path d="M144 126 c12 0 12 16 0 16"/>
+        <path d="M118 40 l2.5 7 h7 l-5.5 4.5 2 7 -6 -4.5 -6 4.5 2 -7 -5.5 -4.5 h7z"/>
+        <path d="M120 196 l2 5.5 h5.5 l-4.5 3.5 1.7 5.5 -4.7 -3.5 -4.7 3.5 1.7 -5.5 -4.5 -3.5 h5.5z"/>
+      </g>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#pat)"/>
+</svg>
+
+<div class="snow" id="snow" aria-hidden="true"></div>
+
+<div class="page">
+
+  <!-- guirnalda de galletas -->
+  <svg class="garland" aria-hidden="true" width="100%" height="96">
+    <defs>
+      <pattern id="gar" width="420" height="96" patternUnits="userSpaceOnUse">
+        <path d="M0 10 Q52.5 50 105 10 Q157.5 50 210 10 Q262.5 50 315 10 Q367.5 50 420 10" fill="none" stroke="#3b2f2f" stroke-width="2.4"/>
+        <!-- galleta estrella -->
+        <g transform="translate(52.5 60)">
+          <line x1="0" y1="-30" x2="0" y2="-20" stroke="#3b2f2f" stroke-width="1.6"/>
+          <polygon points="0,-20 5.3,-7.3 19,-6.2 8.6,2.8 11.8,16.2 0,9 -11.8,16.2 -8.6,2.8 -19,-6.2 -5.3,-7.3" fill="#f2bf3a" stroke="#fff3df" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="0" cy="2" r="2.4" fill="#fff3df"/>
+        </g>
+        <!-- galleta regalo -->
+        <g transform="translate(157.5 62)">
+          <line x1="0" y1="-32" x2="0" y2="-16" stroke="#3b2f2f" stroke-width="1.6"/>
+          <rect x="-17" y="-16" width="34" height="34" rx="6" fill="#d9424a" stroke="#fff3df" stroke-width="3"/>
+          <rect x="-3" y="-16" width="6" height="34" fill="#fff3df"/><rect x="-17" y="-1" width="34" height="6" fill="#fff3df"/>
+          <ellipse cx="-6" cy="-19" rx="6" ry="4" fill="#fff3df"/><ellipse cx="6" cy="-19" rx="6" ry="4" fill="#fff3df"/>
+        </g>
+        <!-- bola morada -->
+        <g transform="translate(262.5 62)">
+          <line x1="0" y1="-32" x2="0" y2="-18" stroke="#3b2f2f" stroke-width="1.6"/>
+          <circle cx="0" cy="2" r="17" fill="url(#gPurple)" stroke="#fff3df" stroke-width="3"/>
+          <rect x="-5" y="-19" width="10" height="6" rx="1.5" fill="#e8b23d"/>
+          <path d="M-12 2 q4 -5 8 0 t8 0 t8 0" stroke="#fff3df" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        </g>
+        <!-- galleta gorrito -->
+        <g transform="translate(367.5 58)">
+          <line x1="0" y1="-28" x2="0" y2="-14" stroke="#3b2f2f" stroke-width="1.6"/>
+          <path d="M-16 14 C-14 -10 0 -18 10 -14 C16 -12 18 -4 16 14Z" fill="#d9424a" stroke="#fff3df" stroke-width="3" stroke-linejoin="round"/>
+          <rect x="-19" y="10" width="38" height="11" rx="5.5" fill="#fff3df"/>
+          <circle cx="12" cy="-14" r="6" fill="#fff3df"/>
+        </g>
+      </pattern>
+    </defs>
+    <rect width="100%" height="96" fill="url(#gar)"/>
+  </svg>
+
+  <!-- portada -->
+  <div class="hero-wrap">
+    <div class="peek l l1" aria-hidden="true"><svg viewBox="0 0 120 140"><use href="#reindeer"/></svg></div>
+    <div class="peek l l2" aria-hidden="true"><svg viewBox="0 0 120 140"><use href="#santa"/></svg></div>
+    <div class="peek r r1" aria-hidden="true"><svg viewBox="0 0 120 140"><use href="#reindeer"/></svg></div>
+    <div class="peek r r2" aria-hidden="true"><svg viewBox="0 0 120 140"><use href="#snowman"/></svg></div>
+
+    <header class="hero">
+      <h1>Amigo Secreto Navideño</h1>
+      <p class="sub">Los duendes guardaron tu amigo secreto bajo un código chistoso. Escríbelo y descubre a quién le vas a regalar.</p>
+    </header>
+  </div>
+
+  <main>
+    <section>
+      <label for="codigo">Escribe tu código chistoso</label>
+      <div class="code-row">
+        <input id="codigo" type="text" maxlength="30" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" placeholder="Ej: Duende Cantante" aria-describedby="err">
+        <button id="ir" type="button">Abrir regalo</button>
+      </div>
+      <p id="err" class="err" role="alert"></p>
+    </section>
+
+    <section id="result" aria-live="polite"></section>
+  </main>
+
+  <!-- pueblito nevado -->
+  <footer class="village" aria-hidden="true">
+    <svg class="houses" width="100%" height="170">
+      <defs>
+        <pattern id="hou" width="420" height="170" patternUnits="userSpaceOnUse">
+          <!-- casa café -->
+          <rect x="302" y="82" width="84" height="70" fill="#b98655"/>
+          <polygon points="292,88 344,44 396,88" fill="#8c5a3a"/>
+          <polyline points="292,88 344,44 396,88" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="314" y="102" width="20" height="26" rx="2" fill="#5f8fd0" stroke="#fff" stroke-width="3"/>
+          <rect x="352" y="102" width="20" height="26" rx="2" fill="#5f8fd0" stroke="#fff" stroke-width="3"/>
+          <path d="M324 102 V128 M314 115 H334 M362 102 V128 M352 115 H372" stroke="#fff" stroke-width="2"/>
+          <!-- casa amarilla -->
+          <rect x="18" y="76" width="90" height="76" fill="#f0c15f"/>
+          <polygon points="8,82 63,36 118,82" fill="#c77a4c"/>
+          <polyline points="8,82 63,36 118,82" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="30" y="96" width="20" height="26" rx="2" fill="#5f8fd0" stroke="#fff" stroke-width="3"/>
+          <rect x="76" y="96" width="20" height="26" rx="2" fill="#5f8fd0" stroke="#fff" stroke-width="3"/>
+          <path d="M40 96 V122 M30 109 H50 M86 96 V122 M76 109 H96" stroke="#fff" stroke-width="2"/>
+          <path d="M52 152 V132 a11 11 0 0 1 22 0 V152Z" fill="#9c6a43"/>
+          <!-- casa roja -->
+          <rect x="138" y="62" width="118" height="90" fill="#e5535c"/>
+          <rect x="230" y="26" width="16" height="30" fill="#a8514a"/>
+          <rect x="227" y="21" width="22" height="8" rx="4" fill="#fff"/>
+          <polygon points="126,68 197,14 268,68" fill="#c43a45"/>
+          <polyline points="126,68 197,14 268,68" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M138 76 q8 8 16 0 q8 8 16 0 q8 8 16 0 q8 8 16 0 q8 8 16 0 q8 8 16 0 q8 8 16 0" fill="none" stroke="#fff" stroke-width="2.4"/>
+          <rect x="150" y="92" width="24" height="30" rx="3" fill="#5f8fd0" stroke="#fff" stroke-width="3"/>
+          <rect x="220" y="92" width="24" height="30" rx="3" fill="#5f8fd0" stroke="#fff" stroke-width="3"/>
+          <path d="M162 92 V122 M150 107 H174 M232 92 V122 M220 107 H244" stroke="#fff" stroke-width="2"/>
+          <path d="M180 152 V124 a17 17 0 0 1 34 0 V152Z" fill="#fdeee0" stroke="#fff" stroke-width="3"/>
+          <circle cx="207" cy="140" r="2" fill="#c43a45"/>
+          <!-- nieve en el suelo -->
+          <path d="M0 146 Q35 132 70 146 T140 146 T210 146 T280 146 T350 146 T420 146 V172 H0Z" fill="#fff"/>
+          <path d="M0 146 Q35 132 70 146 T140 146 T210 146 T280 146 T350 146 T420 146" fill="none" stroke="#e1ecf4" stroke-width="2"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="170" fill="url(#hou)"/>
+    </svg>
+    <svg class="tree l" viewBox="0 0 120 190"><use href="#pine"/></svg>
+    <svg class="tree r" viewBox="0 0 120 190"><use href="#pine"/></svg>
+  </footer>
+</div>
+
+<script>
+  const NOMBRES = ["Víctor", "Jhonathan", "Emma", "Manuela", "Andrea", "Orlando", "Juan Sebastián", "Felipe", "Lucero", "Marisella", "Jurgen", "Carlos", "Oscar", "Majo", "Ruby", "Juan Carlos", "David", "Norma", "Valentina", "Edis", "Diana", "Sebastián"];
+  const SALT = "amigo-secreto-navidad-2026";
+  // Solo se guardan huellas: aquí no se puede leer quién le regala a quién.
+  const HUELLAS = new Set(["881697beaa994972e60749462bddca17c452fddfc933e2ecd382e6a7df443187", "6422afb66d395eb762306853d39f2a1b5d9ed2e447f50aa71e58db9ec94153be", "2a9305e4c14ac53b95c7f4696a83045270470a3e57e0edb409dc285967be3ebe", "51df29837338e0aaf8bbbc2c8e7d9e0aa3de1dbe16a5b690fad6f983dfdb5031", "ea9103a77069a8f2077c0ae2aee8c4c7294c390e602d4e0e3176b31c07793ee7", "60cbf72636896a121850f7ce859c95f19a81efc5e7c8fab1933325499842cbc8", "b86a3ce8f69afffcea976ca05d8e3fa471a3ae7fd7af8d23ae981844d9f7b94f", "7ec83b052a0716f36dcb34f4963b27e5ed7131faeea03e3eb8c41d8bd132b35c", "54fd43689537143cd01e46a15108413a487b0dccebb54f356854d35386a5e011", "c77df47950032a88ded2ff5c8164d3be30c8503728611aa46dc79dc2519c18e8", "a48a50ff131b6030e9dcacd8b10ef97933a3e7af967d72774884d709cbfbfb20", "f80da64976fa6621cd4713a2b2a0b99d305bcae754c609f04c1e2cf805d89dde", "3a4be2d0bd393a09dec828c4cd9fd531306d01bdf7c778eda709eb5117433bad", "9916dd0e9d3257b18c9e79f92c8ca7f739c83da3c79d136a334c5109bc241faf", "23b51d43a9549168900cb3f5e3be4604a051a962278ec9ef82f9f831310ec91b", "4a3e03059ccc99aad5760a0f0bc1901ddd8a4a6cee8340f5993a85fa31879e35", "a0529e77df4565c7acd7db928c710d03878ecedcd429ff680bb94e6edaa3fa5c", "23612bb7d21c5edb2199f92b6cb33eef78bbdab3c759013cfb5260d8d4737fd8", "8d11aae282464bf49430b5e2ac215e9560a620c36781ea361b19a8bb765d50e5", "7c1aea06a282de3609ef2bd5d8824d42e4e5a612914c96caa58c320772bb8b04", "956e592d6a1252a436875182b23203a55b48f1c162a90c6a7ea1b9435b96c433", "77fcbe53bc78a4e1612a4ad095dc5d59482f22b675e07433fcf47d408dd022f9"]);
+
+  const input = document.getElementById("codigo");
+  const btn = document.getElementById("ir");
+  const err = document.getElementById("err");
+  const result = document.getElementById("result");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // nieve
+  (function () {
+    if (reduce) return;
+    const snow = document.getElementById("snow");
+    for (let i = 0; i < 30; i++) {
+      const s = document.createElement("i");
+      const size = 4 + Math.random() * 6;
+      s.style.width = s.style.height = size + "px";
+      s.style.left = Math.random() * 100 + "%";
+      s.style.opacity = (0.55 + Math.random() * 0.4).toFixed(2);
+      s.style.animationDuration = (8 + Math.random() * 9) + "s";
+      s.style.animationDelay = (-Math.random() * 12) + "s";
+      s.style.setProperty("--drift", (Math.random() * 60 - 30) + "px");
+      snow.appendChild(s);
+    }
+  })();
+
+  async function sha256(txt) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(txt));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  async function buscar(codigo) {
+    for (const quien of NOMBRES) {
+      for (const amigo of NOMBRES) {
+        if (quien === amigo) continue;
+        if (HUELLAS.has(await sha256(`${SALT}|${codigo}|${quien}|${amigo}`))) {
+          return { quien, amigo };
+        }
+      }
+    }
+    return null;
+  }
+
+  const espera = ms => new Promise(r => setTimeout(r, ms));
+
+  // Mayúsculas, tildes y espacios no importan: "Duénde 47" = "duende47"
+  function normalizar(s) {
+    return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  }
+
+  const CHARS = ["santa", "snowman", "reindeer", "gift"];
+  const FRASES = [
+    "Santa está revisando su lista...",
+    "El muñeco de nieve guarda el secreto...",
+    "Los renos ya vienen volando...",
+    "Los duendes envuelven tu regalo...",
+    "¡Ya casi está!"
+  ];
+  const PERSONAJES = [
+    { id: "santa",    d: "¡Ho, ho, ho!" },
+    { id: "snowman",  d: "¡Este secreto no se derrite!" },
+    { id: "reindeer", d: "¡Los renos ya lo llevaron!" },
+    { id: "gift",     d: "¡Un regalo muy bien envuelto!" }
+  ];
+
+  async function revelar() {
+    const codigo = normalizar(input.value);
+    err.textContent = "";
+    result.innerHTML = "";
+
+    if (codigo.length < 3) {
+      err.textContent = "Escribe tu código completo (las dos palabras). Revísalo e inténtalo de nuevo.";
+      return;
+    }
+
+    btn.disabled = true;
+    const op = document.createElement("div");
+    op.className = "opening";
+    op.innerHTML = '<svg viewBox="0 0 120 140" aria-hidden="true"><use href="#santa"/></svg><p>Santa está revisando su lista...</p>';
+    const useEl = op.querySelector("use"), pEl = op.querySelector("p");
+    let k = 0;
+    const timer = setInterval(() => {
+      k++;
+      useEl.setAttribute("href", "#" + CHARS[k % CHARS.length]);
+      pEl.textContent = FRASES[k % FRASES.length];
+    }, 480);
+    result.appendChild(op);
+
+    let hallado = null;
+    try {
+      const [h] = await Promise.all([buscar(codigo), espera(reduce ? 200 : 2500)]);
+      hallado = h;
+    } catch (e) {
+      clearInterval(timer);
+      result.innerHTML = "";
+      err.textContent = "No se pudo abrir el regalo. Prueba desde otro navegador.";
+      btn.disabled = false;
+      return;
+    }
+
+    clearInterval(timer);
+    result.innerHTML = "";
+    btn.disabled = false;
+
+    if (!hallado) {
+      err.textContent = "Ese código no abre ningún regalo. Revisa que esté bien escrito, con las dos palabras.";
+      input.classList.remove("shake"); void input.offsetWidth; input.classList.add("shake");
+      return;
+    }
+
+    const pj = PERSONAJES[Math.floor(Math.random() * PERSONAJES.length)];
+
+    const wrap = document.createElement("div");
+    wrap.className = "reveal-wrap";
+
+    const rib = document.createElement("div");
+    rib.className = "ribbon";
+    rib.setAttribute("aria-hidden", "true");
+    rib.innerHTML = '<svg viewBox="0 0 120 140"><use href="#' + pj.id + '"/></svg>';
+
+    const card = document.createElement("div");
+    card.className = "reveal";
+
+    const bubble = document.createElement("p");
+    bubble.className = "bubble"; bubble.textContent = pj.d;
+
+    const who = document.createElement("p");
+    who.className = "who"; who.textContent = "¡Feliz Navidad, " + hallado.quien + "!";
+
+    const lead = document.createElement("p");
+    lead.className = "lead"; lead.textContent = "Tu amigo secreto es...";
+
+    const amigo = document.createElement("p");
+    amigo.className = "amigo"; amigo.textContent = hallado.amigo;
+
+    const hint = document.createElement("p");
+    hint.className = "hint"; hint.textContent = "Shhh 🤫 Que nadie se entere: la magia está en la sorpresa.";
+
+    card.append(bubble, who, lead, amigo, hint);
+    wrap.append(rib, card);
+
+    const locked = document.createElement("p");
+    locked.className = "locked";
+    locked.textContent = "🎅 El sorteo ya está sellado. Puedes volver cuantas veces quieras, pero tu amigo secreto no cambia.";
+
+    result.append(wrap, locked);
+    wrap.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+  }
+
+  input.addEventListener("keydown", e => { if (e.key === "Enter") revelar(); });
+  btn.addEventListener("click", revelar);
+</script>
+</body>
+</html>
